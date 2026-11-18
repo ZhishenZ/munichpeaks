@@ -1,0 +1,13 @@
+# Routing engine data (multi-GB, regenerated locally)
+routing/
+*.osm.pbf
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
