@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Munich Peaks</title>
+  <meta name="description" content="3D map of well-known hiking peaks within a 3-hour drive of Munich.">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="map"></div>
+
+  <header class="panel brand">
+    <h1>Munich Peaks</h1>
+    <p id="subtitle">Hiking summits within a 3 h drive</p>
+  </header>
+
+  <div class="top-right">
+    <div class="row">
+    <div class="panel seg lang" role="group" aria-label="Place name language">
+      <button data-lang="en" title="English names">EN</button><button data-lang="local" title="Local names (München, Tirol, Trento)">Local</button>
+    </div>
+    <div class="panel basemap" role="group" aria-label="Basemap">
+      <button data-base="relief" class="active">Relief</button>
+      <button data-base="sat">Satellite</button>
+    </div>
+    </div>
+    <div class="panel picker">
+      <select id="region-select" aria-label="Browse by region"><option value="">Browse by region…</option></select>
+    </div>
+    <div class="panel search">
+      <input id="search" type="search" placeholder="Find a peak…" list="peak-names" autocomplete="off" aria-label="Find a peak">
+      <datalist id="peak-names"></datalist>
+    </div>
+  </div>
+
+  <section class="panel legend" id="legend" aria-label="Legend">
+    <div class="legend-title">Drive time from <span id="origin-name"></span></div>
+    <ul id="legend-bands"></ul>
+    <div class="legend-title">Summit elevation (m)</div>
+    <div class="ele-bar" id="ele-bar"></div>
+    <div class="ele-ticks" id="ele-ticks"></div>
+    <label class="toggle"><input type="checkbox" id="toggle-iso" checked> Show drive-time zones</label>
+    <p class="fine">Free-flow driving times without traffic. Weekend trips usually take longer.</p>
+  </section>
+
+  <section id="region" class="panel region" hidden aria-label="Region">
+    <button class="back">‹ All regions</button>
+    <div class="eyebrow" id="region-country"></div>
+    <h2 id="region-name"></h2>
+    <div class="region-meta" id="region-meta"></div>
+    <div class="sort" role="group" aria-label="Sort peaks">
+      <button data-sort="rank" class="active">Best known</button><button data-sort="ele">Highest</button><button data-sort="min">Closest</button>
+    </div>
+    <ol id="region-list"></ol>
+  </section>
+
+  <aside id="card" class="panel card" hidden>
+    <button class="close" aria-label="Close">×</button>
+    <button class="back"></button>
+    <div class="eyebrow" id="card-band"></div>
+    <h2 id="card-name"></h2>
+    <div class="alt-name" id="card-alt"></div>
+    <div class="stats">
+      <div><span id="card-ele"></span><small>elevation</small></div>
+      <div><span id="card-time"></span><small>drive</small></div>
+      <div><span id="card-km"></span><small>distance</small></div>
+    </div>
+    <p class="note" id="card-note"></p>
+    <div class="card-foot">
+      <div class="links" id="card-links"></div>
+      <div class="rotate" role="group" aria-label="Rotate view">
+        <button data-deg="-45" title="Rotate left" aria-label="Rotate left">⟲</button><button data-deg="45" title="Rotate right" aria-label="Rotate right">⟳</button>
+      </div>
+    </div>
+  </aside>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
