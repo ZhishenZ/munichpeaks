@@ -1,0 +1,11 @@
+{
+  "_comment": "Geofabrik extracts covering the 3 h drive area from the origin. Paths relative to https://download.geofabrik.de/",
+  "extracts": [
+    "europe/germany/bayern",
+    "europe/germany/baden-wuerttemberg",
+    "europe/austria",
+    "europe/switzerland",
+    "europe/italy/nord-est",
+    "europe/liechtenstein"
+  ]
+}
