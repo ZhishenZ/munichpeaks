@@ -22,8 +22,11 @@
   const eleColor = ['interpolate', ['linear'], ['get', 'ele'], ...ELE_STOPS.flat()];
   const isZone = ['!', ['has', 'outside']];
   const TERRAIN_EXAGGERATION = 1.4;
-  const HOME = { center: [11.25, 47.65], zoom: 7.3, pitch: 35, bearing: 0 };
   const isMobile = () => window.matchMedia('(max-width: 640px)').matches;
+  // Overview camera. A phone is narrow and tall with a legend at the bottom: zoom out a little
+  // and look further south so Munich and the Alps both sit in the visible part.
+  const HOME = () => isMobile() ? { center: [11.4, 47.25], zoom: 6.55, pitch: 35, bearing: 0 }
+                                : { center: [11.25, 47.65], zoom: 7.3, pitch: 35, bearing: 0 };
 
   // Label language for places and regions: English (where OSM has a name:en) or local
   // (München, Tirol, Trento). Peak names are always the local OSM name.
@@ -197,7 +200,7 @@
   };
 
   // ---- Map --------------------------------------------------------------
-  const map = new maplibregl.Map({ container: 'map', style, ...HOME, maxPitch: 85, attributionControl: false });
+  const map = new maplibregl.Map({ container: 'map', style, ...HOME(), maxPitch: 85, attributionControl: false });
   window.__map = map; // debug handle
   map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
@@ -385,8 +388,12 @@
   }
 
   let flightToken = 0;
+  // On phones the map is only visible between the top controls and the bottom sheet (card or
+  // region panel); measure both instead of guessing, mobile Safari's toolbars change the height.
+  const topControlsBottom = () => document.querySelector('.top-right').getBoundingClientRect().bottom;
+  const sheetHeight = el => window.innerHeight - el.getBoundingClientRect().top;
   function viewPadding() {
-    return isMobile() ? { bottom: card.offsetHeight + 20, top: 60, left: 0, right: 0 }
+    return isMobile() ? { top: topControlsBottom() + 10, bottom: sheetHeight(card) + 10, left: 0, right: 0 }
                       : { left: 340, top: 0, bottom: 0, right: 0 };
   }
 
@@ -399,7 +406,7 @@
     flightToken++;
     if (focus) { setHash('region', focus.id); flyToRegion(focus); return; }
     setHash(null);
-    map.flyTo({ ...HOME, padding: { left: 0, right: 0, top: 0, bottom: 0 }, duration: 3000 });
+    map.flyTo({ ...HOME(), padding: { left: 0, right: 0, top: 0, bottom: 0 }, duration: 3000 });
   }
   card.querySelector('.close').onclick = closeCard;
   card.querySelector('.back').onclick = closeCard;
@@ -483,7 +490,7 @@
   });
 
   function regionPadding() {
-    return isMobile() ? { top: 110, bottom: Math.round(window.innerHeight * 0.45) + 20, left: 20, right: 20 }
+    return isMobile() ? { top: topControlsBottom() + 12, bottom: sheetHeight(regionPanel) + 12, left: 16, right: 16 }
                       : { left: 360, top: 60, bottom: 40, right: 60 };
   }
   // Camera for a region's bbox, computed directly (fitBounds is thrown off by the pitch and
@@ -529,7 +536,7 @@
   function exitRegion() {
     clearRegion();
     setHash(null);
-    map.flyTo({ ...HOME, padding: { left: 0, right: 0, top: 0, bottom: 0 }, duration: 2500 });
+    map.flyTo({ ...HOME(), padding: { left: 0, right: 0, top: 0, bottom: 0 }, duration: 2500 });
   }
   // close the peak card without flying anywhere (another camera move follows)
   function closeCardQuiet() {

@@ -110,9 +110,21 @@ a { color: var(--text); }
 body.peak-open .legend, body.region-open .legend, body.peak-open .region { display: none; }
 
 @media (max-width: 640px) {
-  .brand { padding: 8px 12px; }
-  .brand p { display: none; }
-  .search input { width: 150px; }
+  /* phones: no title; controls in two compact full-width rows
+       [ search          ][ EN | Local       ]
+       [ region picker   ][ Relief | Sat.    ] */
+  .brand { display: none; }
+  .top-right { top: 10px; left: 10px; right: 10px; display: grid; grid-template-columns: 1fr auto; gap: 6px;
+    grid-template-areas: "search lang" "picker base"; align-items: stretch; }
+  .top-right .row { display: contents; }
+  .top-right .search { grid-area: search; }
+  .top-right .lang { grid-area: lang; }
+  .top-right .picker { grid-area: picker; min-width: 0; }
+  .top-right .basemap { grid-area: base; }
+  .basemap, .seg { padding: 3px; gap: 2px; }
+  .basemap button, .seg button { padding: 5px 9px; font-size: 13px; }
+  /* 16px keeps iOS Safari from zooming in when the field gets focus */
+  .search input, .picker select { width: 100%; font-size: 16px; padding: 6px 10px; }
   .legend { left: 12px; right: 12px; bottom: 28px; width: auto; padding: 10px 12px; }
   .legend ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; margin-bottom: 6px; }
   .legend li { margin: 0; padding: 3px 4px; font-size: 12px; }
@@ -121,9 +133,12 @@ body.peak-open .legend, body.region-open .legend, body.peak-open .region { displ
   .ele-ticks { margin-bottom: 6px; }
   .legend .fine { display: none; }
   .card { left: 12px; right: 12px; bottom: 28px; width: auto; max-width: none; }
-  .picker select { width: 150px; }
-  .top-right .row { flex-direction: column; align-items: flex-end; }
-  .region { left: 12px; right: 12px; bottom: 28px; width: auto; height: 45vh; max-height: none; }
+  /* dvh = the height actually visible in mobile Safari (between its toolbars) */
+  .region { left: 10px; right: 10px; bottom: 24px; width: auto; height: 38vh; height: 38dvh; max-height: none;
+    padding: 10px 12px; }
+  .region .sort { margin: 6px 0 4px; }
+  .card { left: 10px; right: 10px; bottom: 24px; }
+  .legend { left: 10px; right: 10px; bottom: 24px; }
   .region h2 { font-size: 19px; }
   .maplibregl-ctrl-group { display: none; }   /* pinch / two-finger gestures instead */
 }
