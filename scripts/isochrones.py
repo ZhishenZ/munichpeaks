@@ -10,12 +10,11 @@ Usage:  uv run scripts/isochrones.py
 from __future__ import annotations
 
 import json
-import re
 
 from shapely.geometry import MultiPolygon, Polygon, box, mapping, shape
 from shapely.validation import make_valid
 
-from routing_common import ORIGIN, ROOT, call, make_actor
+from routing_common import ORIGIN, ROOT, call, dumps_records, make_actor
 
 OUT = ROOT / "web" / "data" / "isochrones.geojson"
 MINUTES = [60, 90, 120, 150, 180]
@@ -68,8 +67,7 @@ def main() -> None:
           "properties": {"origin": ORIGIN, "note": "Free-flow drive time (no traffic)."},
           "features": feats}
     # 5 decimals ≈ 1 m precision: keeps the file small
-    text = json.dumps(gj, separators=(",", ":"))
-    text = re.sub(r"(\d+\.\d{5})\d+", r"\1", text)
+    text = dumps_records(gj, "features", decimals=5)
     OUT.write_text(text)
     print(f"wrote {OUT.relative_to(ROOT)} ({len(text) / 1024:.0f} KB)")
 

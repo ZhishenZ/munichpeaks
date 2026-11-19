@@ -8,13 +8,12 @@ Usage:  uv run scripts/fetch_places.py
 """
 from __future__ import annotations
 
-import json
 import re
 import time
 
 import requests
 
-from routing_common import ROOT
+from routing_common import ROOT, dumps_records
 
 OUT = ROOT / "web" / "data" / "places.geojson"
 OVERPASS = "https://overpass-api.de/api/interpreter"
@@ -59,8 +58,7 @@ def main() -> None:
                       "properties": {"name": local_name(t), "en": t.get("name:en"),
                                      "rank": rank, "pop": pop}})
     feats.sort(key=lambda f: (f["properties"]["rank"], -f["properties"]["pop"]))
-    OUT.write_text(json.dumps({"type": "FeatureCollection", "features": feats},
-                              ensure_ascii=False, separators=(",", ":")))
+    OUT.write_text(dumps_records({"type": "FeatureCollection", "features": feats}, "features"))
     by = {k: sum(f["properties"]["rank"] == k for f in feats) for k in (1, 2, 3)}
     print(f"wrote {OUT.relative_to(ROOT)}: {len(feats)} places {by} ({OUT.stat().st_size / 1024:.0f} KB)")
 

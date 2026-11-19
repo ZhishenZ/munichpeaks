@@ -1,8 +1,9 @@
-"""Shared helpers for the routing scripts (local Valhalla via pyvalhalla)."""
+"""Shared helpers for the pipeline scripts (local Valhalla via pyvalhalla, data file output)."""
 from __future__ import annotations
 
 import json
 import math
+import re
 from pathlib import Path
 
 from valhalla import Actor
@@ -45,3 +46,18 @@ def haversine_km(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
     dp, dl = p2 - p1, math.radians(lon2 - lon1)
     a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
     return 2 * r * math.asin(math.sqrt(a))
+
+
+def dumps_records(obj: dict, key: str, decimals: int | None = None) -> str:
+    """JSON with one record per line: obj[key] is the list of records (peaks, features).
+
+    Readable in an editor and gives one-line git diffs per changed peak / region, at almost no
+    size cost. `decimals` rounds all floats (e.g. coordinates) to that many digits.
+    """
+    def one(x) -> str:
+        text = json.dumps(x, ensure_ascii=False)
+        return re.sub(rf"(\d+\.\d{{{decimals}}})\d+", r"\1", text) if decimals else text
+
+    head = one({k: v for k, v in obj.items() if k != key})
+    body = ",\n".join(one(r) for r in obj[key])
+    return head[:-1] + (", " if len(head) > 2 else "") + f'"{key}": [\n{body}\n]}}\n'

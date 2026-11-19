@@ -23,7 +23,7 @@ from datetime import date
 from shapely import STRtree
 from shapely.geometry import Point, shape
 
-from routing_common import ORIGIN, ROOT, haversine_km
+from routing_common import ORIGIN, ROOT, dumps_records, haversine_km
 
 IN = ROOT / "data" / "peaks_routed.json"
 OUT = ROOT / "web" / "data" / "peaks.json"
@@ -97,14 +97,14 @@ def main() -> None:
 
     for f in regions["features"]:
         f["properties"]["n"] = sum(1 for x in out if x["reg"] == f["properties"]["id"])
-    REGIONS.write_text(json.dumps(regions, ensure_ascii=False, separators=(",", ":")))
+    REGIONS.write_text(dumps_records(regions, "features"))
 
     origin = dict(ORIGIN)
     origin.setdefault("short", "Munich Hbf")
     data = {"generated": date.today().isoformat(), "origin": origin,
             "rules": {"max_min": MAX_MIN, "min_sitelinks": MIN_SITELINKS},
             "peaks": out}
-    OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
+    OUT.write_text(dumps_records(data, "peaks"))
     bands = {b: sum(1 for x in out if x["band"] == b) for b in range(1, 6)}
     print(f"{len(cand)} candidates -> {len(out)} peaks {bands} -> {OUT.relative_to(ROOT)} "
           f"({OUT.stat().st_size / 1024:.0f} KB)")

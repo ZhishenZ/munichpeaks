@@ -22,7 +22,7 @@ import requests
 from shapely.geometry import LineString, MultiPolygon, Polygon, mapping, shape
 from shapely.ops import linemerge, polygonize, polylabel, unary_union
 
-from routing_common import ROOT
+from routing_common import ROOT, dumps_records
 
 ISO = ROOT / "web" / "data" / "isochrones.geojson"
 OUT = ROOT / "web" / "data" / "regions.geojson"
@@ -118,9 +118,7 @@ def main() -> None:
                                      "lon": round(label.x, 4), "lat": round(label.y, 4),
                                      "bbox": [round(v, 4) for v in geom.bounds]}})
     feats.sort(key=lambda f: (f["properties"]["country"], f["properties"]["name"]))
-    text = json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False,
-                      separators=(",", ":"))
-    text = re.sub(r"(\d+\.\d{5})\d+", r"\1", text)
+    text = dumps_records({"type": "FeatureCollection", "features": feats}, "features", decimals=5)
     OUT.write_text(text)
     print(f"wrote {OUT.relative_to(ROOT)}: {len(feats)} regions ({len(text) / 1024:.0f} KB)")
     for f in feats:
