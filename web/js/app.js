@@ -438,6 +438,38 @@
   // ---- Regions ----------------------------------------------------------
   let focus = null, hoverId = null;
   const regionPanel = document.getElementById('region');
+
+  // ---- Phone bottom sheets --------------------------------------------------
+  // Legend and region panel start collapsed on phones (one line + grip): tap or swipe up to
+  // open, tap the grip or swipe down to close. On desktop the 'collapsed' class has no effect.
+  function setupSheet(el) {
+    const grip = el.querySelector('.sheet-grip');
+    const set = collapsed => {
+      el.classList.toggle('collapsed', collapsed);
+      grip.setAttribute('aria-expanded', String(!collapsed));
+    };
+    el.collapse = () => { if (isMobile()) set(true); };
+    el.collapse();
+    el.addEventListener('click', e => {
+      if (!isMobile()) return;
+      if (el.classList.contains('collapsed')) { set(false); e.stopPropagation(); }
+      else if (e.target === grip) set(true);
+    });
+    let y0 = null, fromList = false;
+    el.addEventListener('touchstart', e => {
+      y0 = e.touches[0].clientY;
+      fromList = !!e.target.closest('#region-list');   // swiping inside the list scrolls it
+    }, { passive: true });
+    el.addEventListener('touchend', e => {
+      if (y0 == null || !isMobile()) return;
+      const dy = e.changedTouches[0].clientY - y0;
+      y0 = null;
+      if (dy < -30) set(false);
+      else if (dy > 30 && !fromList) set(true);
+    }, { passive: true });
+  }
+  setupSheet(document.getElementById('legend'));
+  setupSheet(regionPanel);
   const regionSelect = document.getElementById('region-select');
   let regionSort = 'rank';
 
@@ -518,6 +550,7 @@
     applyFilters();
     renderRegion();
     regionPanel.hidden = false;
+    regionPanel.collapse();   // phones: start small so the region itself is visible
     document.body.classList.add('region-open');
     setHash('region', r.id);
     stopOrbit();

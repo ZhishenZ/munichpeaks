@@ -106,6 +106,10 @@ a { color: var(--text); }
 #region-list .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #region-list .v { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+/* Bottom sheets (legend, region panel): on phones they start collapsed to one line and
+   open with a tap or an upward swipe. The grip is phone-only; desktop is unchanged. */
+.sheet-grip { display: none; }
+
 /* card replaces legend / region panel while a peak is open; region panel replaces legend */
 body.peak-open .legend, body.region-open .legend, body.peak-open .region { display: none; }
 
@@ -140,5 +144,16 @@ body.peak-open .legend, body.region-open .legend, body.peak-open .region { displ
   .card { left: 10px; right: 10px; bottom: 24px; }
   .legend { left: 10px; right: 10px; bottom: 24px; }
   .region h2 { font-size: 19px; }
+  .sheet-grip { display: block; width: calc(100% + 24px); height: 18px; margin: -10px -12px 0; padding: 0;
+    background: none; border: 0; cursor: pointer; }
+  .sheet-grip::before { content: ""; display: block; width: 38px; height: 4px; margin: 7px auto 0; border-radius: 2px;
+    background: rgba(255,255,255,.32); }
+  .sheet.collapsed { cursor: pointer; }
+  .region.collapsed { height: auto; padding-bottom: 10px; }
+  .region.collapsed > :not(.sheet-grip):not(h2):not(.region-meta) { display: none; }
+  .region.collapsed h2 { font-size: 17px; margin-top: 0; }
+  .legend.collapsed { padding-bottom: 8px; }
+  .legend.collapsed > :not(.sheet-grip):not(.legend-head) { display: none; }
+  .legend.collapsed .legend-head { margin-bottom: 0; }
   .maplibregl-ctrl-group { display: none; }   /* pinch / two-finger gestures instead */
 }

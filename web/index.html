@@ -35,8 +35,9 @@
     </div>
   </div>
 
-  <section class="panel legend" id="legend" aria-label="Legend">
-    <div class="legend-title">Drive time from <span id="origin-name"></span></div>
+  <section class="panel legend sheet collapsed" id="legend" aria-label="Legend">
+    <button class="sheet-grip" aria-label="Show or hide the legend" aria-expanded="false"></button>
+    <div class="legend-title legend-head">Drive time from <span id="origin-name"></span></div>
     <ul id="legend-bands"></ul>
     <div class="legend-title">Summit elevation (m)</div>
     <div class="ele-bar" id="ele-bar"></div>
@@ -45,7 +46,8 @@
     <p class="fine">Free-flow driving times without traffic. Weekend trips usually take longer.</p>
   </section>
 
-  <section id="region" class="panel region" hidden aria-label="Region">
+  <section id="region" class="panel region sheet collapsed" hidden aria-label="Region">
+    <button class="sheet-grip" aria-label="Show or hide the peak list" aria-expanded="false"></button>
     <button class="back">‹ All regions</button>
     <div class="eyebrow" id="region-country"></div>
     <h2 id="region-name"></h2>
