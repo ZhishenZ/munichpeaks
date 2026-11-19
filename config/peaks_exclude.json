@@ -1,0 +1,4 @@
+{
+  "_comment": "Drop peaks by OSM node id, e.g. {\"osm_id\": 123, \"name\": \"...\", \"reason\": \"...\"}",
+  "exclude": []
+}
